@@ -2,8 +2,8 @@
 Contributors: grimdonkey
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
-Tested up to: 2.8.6
-Stable tag: 1.0.0
+Tested up to: 2.9.2
+Stable tag: 1.0.1
 
 Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over then.
 
@@ -33,5 +33,9 @@ Yes, World of Warcraft TCG is also supported, send me an email at admin@deckbox.
 
 == Changelog ==
 
+= 1.0.1 =
+* Test on newer Wordpress versions, cleanup readme file.
+
 = 1.0.0 =
 * Initial plugin release
+
