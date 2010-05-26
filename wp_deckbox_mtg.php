@@ -2,14 +2,14 @@
 /**
  * @package MagicTheGatheringCardTooltips
  * @author Sebastian Zaha
- * @version 1.0.2
+ * @version 1.0.3
  */
 /*
 Plugin Name: Magic the Gathering Card Tooltips
 Plugin URI: http://deckbox.org/help/tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over then.
 Author: Sebastian Zaha
-Version: 1.0.2
+Version: 1.0.3
 Author URI: http://sebi.tla.ro
 */
 
@@ -20,7 +20,7 @@ function deckbox_register_button($buttons) {
 }
 
 function deckbox_add_tinymce_plugin($plugin_array) {
-   $plugin_array['deckbox'] = get_bloginfo('wpurl') . '/wp-content/plugins/wp_deckbox_mtg/resources/tinymce3/editor_plugin.js';
+   $plugin_array['deckbox'] = get_bloginfo('wpurl') . '/wp-content/plugins/magic-the-gathering-card-tooltips/resources/tinymce3/editor_plugin.js';
    return $plugin_array;
 }
 

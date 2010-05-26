@@ -45,7 +45,7 @@
 	         author : 'Sebastian Zaha',
 	         authorurl : 'http://sebi.tla.ro',
 	         infourl : 'http://deckbox.org/help/tooltips',
-	         version : "1.0.2"
+	         version : "1.0.3"
 	     };
          }
     });
