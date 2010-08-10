@@ -14,7 +14,7 @@
 	         image : url + '/../../images/mtg.png',
 	         onclick : function() {
                      var txt = ed.selection.getContent();
-                     ed.selection.setContent('<a class="deckbox_link" href="http://deckbox.org/mtg/' + txt + '">' + txt + '</a>');
+                     ed.selection.setContent('[mtg_card]' + txt + '[/mtg_card]');
 		 }
              });
 	 },
@@ -45,7 +45,7 @@
 	         author : 'Sebastian Zaha',
 	         authorurl : 'http://sebi.tla.ro',
 	         infourl : 'http://deckbox.org/help/tooltips',
-	         version : "1.0.3"
+	         version : "2.0.0"
 	     };
          }
     });
