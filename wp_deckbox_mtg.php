@@ -35,8 +35,8 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
       $this->_optionName = 'deckbox_tooltip_options';
       $this->_value = array();	
       $this->_styles = array('tooltip', 'embedded');
-      $this->_resources_dir = plugins_url().'/magic_the_gathering_card_tooltips/resources/';
-      $this->_images_dir = plugins_url().'/magic_the_gathering_card_tooltips/images/';
+      $this->_resources_dir = plugins_url().'/magic-the-gathering-card-tooltips/resources/';
+      $this->_images_dir = plugins_url().'/magic-the-gathering-card-tooltips/images/';
 			
       $this->loadSettings();
       $this->init();
@@ -85,7 +85,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
     }
 		
     function add_scripts() {
-      wp_enqueue_script('deckbox', 'http://localhost:3001/javascripts/tooltip.js');
+      wp_enqueue_script('deckbox', 'http://deckbox.org/javascripts/tooltip.js');
       wp_enqueue_script('deckbox_extensions', $this->_resources_dir.'tooltip_extension.js', array('jquery')); 
       add_action('wp_head', array($this, 'init_css'));                        
     }

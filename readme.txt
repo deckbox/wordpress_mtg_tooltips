@@ -17,7 +17,11 @@ A similar tag can be used to quickly create deck listings: [mtg_deck][/mtg_deck]
 a number before their name. All other lines are interpreted as category names. Do *not* include card numbers on the category name lines, they will automatically
 be computed and displayed by the plugin. A short example follows. 
 
-    [mtg_deck title="Really Small Deck"]
+The default style for displaying decks is a card listing with each card having a mouseover tooltip. This style can be changed to an embedded view, where the
+listing has a card image to the right of the deck. This can be toggled in the plugin settings for all decks, or specifically for a deck by setting the style
+attribute to the tag, as can be seen below.
+
+    [mtg_deck title="Really Small Deck" style="embedded"]
         Creatures
         2 Bloodbraid Elf
         4 Grizzly Bears
@@ -56,6 +60,9 @@ Completely compatible: your old posts will remain the same as before, even thoug
 2. An example of a really small deck listing, produced by the code shown in the description
 
 == Changelog ==
+
+= 3.0.1 =
+* Small fixes to the embedded view.
 
 = 3.0.0 =
 * Implement embedded view for decks (no floating card tooltips on mouseover, but the card image is present to the right of the listing)
