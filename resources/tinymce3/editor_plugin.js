@@ -43,9 +43,9 @@
 	     return {
 	         longname : "Magic the Gathering Card Tooltips",
 	         author : 'Sebastian Zaha',
-	         authorurl : 'http://sebi.tla.ro',
+	         authorurl : 'http://deckbox.org',
 	         infourl : 'http://deckbox.org/help/tooltips',
-	         version : "2.0.0"
+	         version : "3.0.0"
 	     };
          }
     });

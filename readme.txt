@@ -1,9 +1,9 @@
 === Magic the Gathering Card Tooltips ===
-Contributors: grimdonkey
+Contributors: grimdonkey, BrentClark
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
 Tested up to: 3.0.1
-Stable tag: 2.0.0
+Stable tag: 3.0.0
 
 Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over them. You can also quickly create deck listings.
 
@@ -56,6 +56,11 @@ Completely compatible: your old posts will remain the same as before, even thoug
 2. An example of a really small deck listing, produced by the code shown in the description
 
 == Changelog ==
+
+= 3.0.0 =
+* Implement embedded view for decks (no floating card tooltips on mouseover, but the card image is present to the right of the listing)
+* Add a few new shortcodes [c], [card], [d] and [deck]
+* Add a customization option for the width of the deck listing display
 
 = 2.0.0 =
 * Rewrote the card button to use shortcode tags.

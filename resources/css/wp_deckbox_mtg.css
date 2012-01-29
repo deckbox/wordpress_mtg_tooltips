@@ -1,0 +1,19 @@
+.mtg_deck_title {
+  text-decoration: underline;
+}
+
+table.mtg_deck {
+  width: 510px;
+  margin: 10px;
+  text-align: left;
+}
+
+table.mtg_deck td {
+  vertical-align: top;
+  padding: 5px 2px;
+}
+
+table.mtg_deck td.card_box {
+  width: 223px;
+  height: 310px;
+}
