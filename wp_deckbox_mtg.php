@@ -2,14 +2,14 @@
 /**
  * @package MagicTheGatheringCardTooltips
  * @author Sebastian Zaha
- * @version 3.0.1
+ * @version 3.0.2
  */
 /*
   Plugin Name: Magic the Gathering Card Tooltips
   Plugin URI: http://deckbox.org/help/tooltips
   Description: Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over them. You can also quickly create deck listings.
   Author: Sebastian Zaha
-  Version: 3.0.1
+  Version: 3.0.2
   Author URI: http://deckbox.org
 */
 
@@ -114,7 +114,8 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
       if ($title) {
         $response = '<h3 class="mtg_deck_title">' . $title . '</h3>';
       }
-      $response .= '<table class="mtg_deck mtg_deck_' . $style . '" cellspacing="0" cellpadding="0" style="width:'. $this->get_deck_width() .'px"><tr><td>';
+      $response .= '<table class="mtg_deck mtg_deck_' . $style . 
+        '" cellspacing="0" cellpadding="0" style="width:'. $this->get_setting('deck_width') .'px;font-size:' . $this->get_setting('font_size') . '%;line-height:' .$this->get_setting('line_height'). '%"><tr><td>';
 
       $current_count = 0; $current_title = ''; $current_body = ''; $first_card = null;
       for ($i = 0; $i < count($lines); $i++) {
@@ -123,6 +124,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         if (preg_match('/^([0-9]+)(.*)/', $line, $bits)) {
           $card_name = trim($bits[2]);
           $first_card = $first_card == null ? $card_name : $first_card;
+          $card_name = str_replace("’", "'", $card_name);
           $line = $bits[1] . '&nbsp;<a href="http://deckbox.org/mtg/'. $card_name . '">' . $card_name . '</a><br />';
           $current_body .= $line;
           $current_count += intval($bits[1]);
@@ -155,7 +157,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
       }
       $title .= ' Deckbox Tooltips';	
 		
-      add_options_page('Deckbox Tooltips', $title, 'read', 'magic-the-gathering-card-tooltips', array($this,'draw_menu'));
+      add_options_page('Deckbox Tooltips', $title, 'read', 'magic-the-gathering-card-tooltips', array($this, 'draw_menu'));
     }
 		
     function draw_menu() {
@@ -178,10 +180,24 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                                                         </td>
                                                      </tr><tr>
                                                         <th class="scope">
-                                                          <label for="tooltip_style">Maximum width:</label>
+                                                          <label for="tooltip_deck_width">Maximum deck width:</label>
                                                         </th>
 							<td>
-                                                          <input type="text" size="3" name="tooltip_deck_width" value="' . $this->get_deck_width() . '"/> px
+                                                          <input type="text" size="3" name="tooltip_deck_width" value="' . $this->get_setting('deck_width') . '"/> px
+                                                        </td>
+                                                     </tr><tr>
+                                                        <th class="scope">
+                                                          <label for="tooltip_font_size">Font size:</label>
+                                                        </th>
+							<td>
+                                                          <input type="text" size="3" name="tooltip_font_size" value="' . $this->get_setting('font_size') . '"/> %
+                                                        </td>
+                                                     </tr><tr>
+                                                        <th class="scope">
+                                                          <label for="tooltip_line_height">Line height:</label>
+                                                        </th>
+							<td>
+                                                          <input type="text" size="3" name="tooltip_line_height" value="' . $this->get_setting('line_height') . '"/> %
                                                         </td>
                                                      </tr>
                                                   </table>
@@ -193,23 +209,19 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 			';
     }
 
-    function get_deck_width() {
-      return $this->_value['tooltip'][0]['deck_width'];
-    }
-
-    function get_style() {
-      return $this->_value['tooltip'][0]['style'];
-    }
-
     function get_style_name() {
-      return $this->_styles[$this->get_style() - 1];
+      return $this->_styles[$this->get_setting('style') - 1];
+    }
+
+    function get_setting($setting) {
+      return $this->_value['tooltip'][0][$setting];
     }
 		
     function get_style_options() {
       $options = '';
       for ($i = 0; $i < count($this->_styles); $i++) {
         $n = $i + 1;
-        $selected = $this->get_style() == $n ? ' selected="selected"' : '';
+        $selected = $this->get_setting('style') == $n ? ' selected="selected"' : '';
         $options .= '<option value="'.$n.'"'.$selected.'>'.$this->_styles[$i].'</option>';
       }
       return $options;
@@ -219,11 +231,25 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
       $dbValue = get_option($this->_optionName);
       if (strlen($dbValue) > 0) {
         $this->_value = json_decode($dbValue,true);
+
+        if (empty($this->_value['tooltip'][0]['style'])) {
+          $this->_value['tooltip'][0]['style'] = 0;
+        }
+        if (empty($this->_value['tooltip'][0]['deck_width'])) {
+          $this->_value['tooltip'][0]['deck_width'] = 510;
+        }
+        if (empty($this->_value['tooltip'][0]['font_size'])) {
+          $this->_value['tooltip'][0]['font_size'] = 100;
+        }
+        if (empty($this->_value['tooltip'][0]['line_height'])) {
+          $this->_value['tooltip'][0]['line_height'] = 140;
+        }
+
         $this->_initialValue = $this->_value;
       } else {
         $deprecated = ' ';
         $autoload = 'yes';
-        $value = '{"tooltip":[{"style":"0", "deck_width":"510"}]}';
+        $value = '{"tooltip":[{"style":"", "deck_width":"", "font_size":"", "line_height":""}]}';
         $result = add_option( $this->_optionName, $value, $deprecated, $autoload );
         $this->loadSettings();
       }
@@ -232,7 +258,10 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
     function handlePostback() {
       if (isset($_POST['isPostback'])) {
         $v = array();
-        $v['tooltip'][] = array('style' => $_POST['tooltip_style'], 'deck_width' => $_POST['tooltip_deck_width']);
+        $v['tooltip'][] = array('style' => $_POST['tooltip_style'], 
+                                'deck_width' => $_POST['tooltip_deck_width'],
+                                'font_size' => $_POST['tooltip_font_size'],
+                                'line_height' => $_POST['tooltip_line_height']);
         $this->_value = $v;
         $this->save();
       }
