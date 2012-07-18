@@ -2,14 +2,14 @@
 /**
  * @package MagicTheGatheringCardTooltips
  * @author Sebastian Zaha
- * @version 3.0.2
+ * @version 3.0.3
  */
 /*
   Plugin Name: Magic the Gathering Card Tooltips
   Plugin URI: http://deckbox.org/help/tooltips
   Description: Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over them. You can also quickly create deck listings.
   Author: Sebastian Zaha
-  Version: 3.0.2
+  Version: 3.0.3
   Author URI: http://deckbox.org
 */
 
@@ -99,7 +99,6 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                                    "title" => null,
                                    "style" => $this->get_style_name(),
                                    ), $atts)); 
-      echo $this->get_style_name();
       // Clean array of card names 
       $dirty_lines = preg_split("/[\n\r]/", $content);
       $lines = array();

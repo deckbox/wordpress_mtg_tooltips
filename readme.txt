@@ -3,7 +3,7 @@ Contributors: grimdonkey, BrentClark
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
 Tested up to: 3.3.1
-Stable tag: 3.0.2
+Stable tag: 3.0.3
 
 Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over them. You can also quickly create deck listings.
 
@@ -60,6 +60,9 @@ Completely compatible: your old posts will remain the same as before, even thoug
 2. An example of a really small deck listing, produced by the code shown in the description
 
 == Changelog ==
+
+= 3.0.2 =
+* Small fix: removed unnecessary echo
 
 = 3.0.2 =
 * Added configuration options for font size and line height for deck listings

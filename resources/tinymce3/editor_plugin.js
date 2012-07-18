@@ -45,7 +45,7 @@
 	         author : 'Sebastian Zaha',
 	         authorurl : 'http://deckbox.org',
 	         infourl : 'http://deckbox.org/help/tooltips',
-	         version : "3.0.2"
+	         version : "3.0.3"
 	     };
          }
     });
