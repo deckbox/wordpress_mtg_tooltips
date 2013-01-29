@@ -35,7 +35,7 @@ Examples
 
 produces the following result:
 
-![screenshot](https://github.com/SebastianZaha/wordpress_mtg_tooltips/blob/master/screenshot-2.png)
+![screenshot](https://raw.github.com/SebastianZaha/wordpress_mtg_tooltips/master/screenshot-2.png)
 
 
 Support and Development
