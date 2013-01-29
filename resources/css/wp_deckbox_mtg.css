@@ -11,6 +11,7 @@ table.mtg_deck {
 table.mtg_deck td {
   vertical-align: top;
   padding: 5px 2px;
+  vertical-align: top;
 }
 
 table.mtg_deck td.card_box {
