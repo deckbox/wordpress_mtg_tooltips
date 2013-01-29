@@ -2,8 +2,8 @@
 Contributors: grimdonkey, BrentClark
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
-Tested up to: 3.3.1
-Stable tag: 3.0.3
+Tested up to: 3.5.1
+Stable tag: 3.1.0
 
 Easily transform Magic the Gathering card names into links that show the card 
 image in a tooltip when hovering over them. You can also quickly create deck listings.
@@ -71,7 +71,10 @@ posts will use the tag syntax.
 
 == Changelog ==
 
-= 3.0.2 =
+= 3.1.0 =
+* Added support for bbpress. Shortcodes are not working there by default.
+
+= 3.0.3 =
 * Small fix: removed unnecessary echo
 
 = 3.0.2 =

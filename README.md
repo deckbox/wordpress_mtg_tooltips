@@ -12,6 +12,9 @@ More Information
 For more details, screenshots and installation instructions please see the 
 [official wordpress readme.txt](https://github.com/SebastianZaha/wordpress_mtg_tooltips/blob/master/readme.txt).
 
+For bbpress forum compatibility I have included in the distribution Pippin's
+fix for bbpress shortcodes [from here](http://wordpress.org/extend/plugins/bbpress-do-short-codes/).
+
 
 Examples
 --------

@@ -45,7 +45,7 @@
 	            author : 'Sebastian Zaha',
 	            authorurl : 'http://deckbox.org',
 	            infourl : 'https://github.com/SebastianZaha/wordpress_mtg_tooltips',
-	            version : "3.0.3"
+	            version : "3.1.0"
 	        };
         }
     });
