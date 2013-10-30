@@ -5,7 +5,7 @@ Plugin URI: https://github.com/SebastianZaha/wordpress_mtg_tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
-Version: 3.1.1
+Version: 3.1.2
 Author URI: http://deckbox.org
 */
 
@@ -144,7 +144,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                     $card_name = trim($bits[2]);
                     $first_card = $first_card == null ? $card_name : $first_card;
                     $card_name = str_replace("’", "'", $card_name);
-                    $line = $bits[1] . '&nbsp;<a href="http://deckbox.org/mtg/'. $card_name .
+                    $line = $bits[1] . '&nbsp;<a class="deckbox_link" target="_blank" href="http://deckbox.org/mtg/'. $card_name .
                         '">' . $card_name . '</a><br />';
                     $current_body .= $line;
                     $current_count += intval($bits[1]);
