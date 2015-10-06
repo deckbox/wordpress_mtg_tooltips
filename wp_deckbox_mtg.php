@@ -1,15 +1,13 @@
 <?php
-/**
+/*
 Plugin Name: Magic the Gathering Card Tooltips
 Plugin URI: https://github.com/SebastianZaha/wordpress_mtg_tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
-Version: 3.1.2
+Version: 3.1.3
 Author URI: http://deckbox.org
 */
-
-
 include('lib/bbp-do-shortcodes.php');
 
 
@@ -30,20 +28,20 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         private $_styles;
         private $_resources_dir;
         private $_images_dir;
-	
+
         function __construct() {
             $this->_name = 'Magic the Gathering Card Tooltips';
             $this->_optionName = 'deckbox_tooltip_options';
-            $this->_value = array();	
+            $this->_value = array();
             $this->_styles = array('tooltip', 'embedded');
             $this->_resources_dir = plugins_url().'/magic-the-gathering-card-tooltips/resources/';
             $this->_images_dir = plugins_url().'/magic-the-gathering-card-tooltips/images/';
-			
+
             $this->loadSettings();
             $this->init();
             $this->handlePostback();
         }
-		
+
         function init() {
             add_action('admin_menu', array($this, 'add_option_menu'));
             $this->add_shortcodes();
@@ -55,7 +53,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             echo '<link type="text/css" rel="stylesheet" href="' . $this->_resources_dir .
                 'css/wp_deckbox_mtg.css" media="screen" />' . "\n";
         }
-		
+
         function add_shortcodes() {
             add_shortcode('mtg_card', array($this,'parse_mtg_card'));
             add_shortcode('card', array($this,'parse_mtg_card'));
@@ -64,18 +62,18 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             add_shortcode('deck', array($this,'parse_mtg_deck'));
             add_shortcode('d', array($this,'parse_mtg_deck'));
         }
-		
+
         function add_buttons() {
             if ( ! current_user_can('edit_posts') && ! current_user_can('edit_pages') )
                 return;
-		 
+
             // Add only in Rich Editor mode
             if ( get_user_option('rich_editing') == 'true') {
                 add_filter("mce_external_plugins", array($this,"add_tinymce_plugin"));
                 add_filter('mce_buttons', array($this,'register_button'));
             }
         }
-		
+
         function register_button($buttons) {
             array_push($buttons, "separator", "deckbox");
             return $buttons;
@@ -85,13 +83,13 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             $plugin_array['deckbox'] = $this->_resources_dir.'tinymce3/editor_plugin.js';
             return $plugin_array;
         }
-		
+
         function add_scripts() {
             wp_enqueue_script('deckbox', 'http://deckbox.org/javascripts/tooltip.js');
-            wp_enqueue_script('deckbox_extensions', $this->_resources_dir.'tooltip_extension.js', array('jquery')); 
-            add_action('wp_head', array($this, 'init_css'));                        
+            wp_enqueue_script('deckbox_extensions', $this->_resources_dir.'tooltip_extension.js', array('jquery'));
+            add_action('wp_head', array($this, 'init_css'));
         }
-		
+
         function parse_mtg_card($atts, $content=null) {
             return '<a class="deckbox_link" target="_blank" href="http://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
         }
@@ -114,8 +112,8 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             extract(shortcode_atts(array(
                         "title" => null,
                         "style" => $this->get_style_name(),
-                    ), $atts)); 
-		  
+                    ), $atts));
+
             if ($title) {
                 $response = '<h3 class="mtg_deck_title">' . $title . '</h3>';
             }
@@ -132,9 +130,9 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
 
         function parse_mtg_deck_lines($lines, $style) {
-            $current_count = 0; 
-            $current_title = ''; 
-            $current_body = ''; 
+            $current_count = 0;
+            $current_title = '';
+            $current_body = '';
             $first_card = null;
 
             for ($i = 0; $i < count($lines); $i++) {
@@ -149,7 +147,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                     $current_body .= $line;
                     $current_count += intval($bits[1]);
                 } else {
-                    // Beginning of a new category. If this was not the first one, we put the previous one 
+                    // Beginning of a new category. If this was not the first one, we put the previous one
                     // into the response body.
                     if ($current_title != "") {
                         $html .= '<span style="font-weight:bold">' . $current_title . ' (' .
@@ -162,7 +160,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                         }
                     }
                     $current_title = $line; $current_count = 0; $current_body = '';
-                }    
+                }
             }
             $html .= '<span style="font-weight:bold">' . $current_title . ' (' . $current_count .
                 ')</span><br />' . $current_body;
@@ -180,12 +178,12 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             if ( version_compare(get_bloginfo('version'), '2.6.999', '>')) {
                 $title = '<img src="'.$this->_images_dir.'deckbox_dragon.jpg" alt="deckbox.org" /> ';
             }
-            $title .= ' Deckbox Tooltips';	
-		
-            add_options_page('Deckbox Tooltips', $title, 'read', 'magic-the-gathering-card-tooltips', 
+            $title .= ' Deckbox Tooltips';
+
+            add_options_page('Deckbox Tooltips', $title, 'read', 'magic-the-gathering-card-tooltips',
                 array($this, 'draw_menu'));
         }
-		
+
         function draw_menu() {
             echo '
               <div class="wrap">
@@ -224,7 +222,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                               <label for="tooltip_line_height">Line height:</label>
                             </th>
                             <td>
-                              <input type="text" size="3" name="tooltip_line_height" value="' 
+                              <input type="text" size="3" name="tooltip_line_height" value="'
                                  . $this->get_setting('line_height') . '"/> %
                             </td>
                           </tr>
@@ -244,7 +242,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         function get_setting($setting) {
             return $this->_value['tooltip'][0][$setting];
         }
-		
+
         function get_style_options() {
             $options = '';
             for ($i = 0; $i < count($this->_styles); $i++) {
@@ -254,7 +252,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             }
             return $options;
         }
-		
+
         function loadSettings() {
             $dbValue = get_option($this->_optionName);
             if (strlen($dbValue) > 0) {
@@ -282,11 +280,11 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 $this->loadSettings();
             }
         }
-		
+
         function handlePostback() {
             if (isset($_POST['isPostback'])) {
                 $v = array();
-                $v['tooltip'][] = array('style' => $_POST['tooltip_style'], 
+                $v['tooltip'][] = array('style' => $_POST['tooltip_style'],
                                   'deck_width' => $_POST['tooltip_deck_width'],
                                   'font_size' => $_POST['tooltip_font_size'],
                                   'line_height' => $_POST['tooltip_line_height']);
@@ -294,7 +292,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 $this->save();
             }
         }
-		
+
         function save() {
             if (($this->_initialValue != $this->_value)) {
                 update_option($this->_optionName, json_encode($this->_value));
