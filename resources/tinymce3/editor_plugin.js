@@ -43,7 +43,7 @@
 	        return {
 	            longname : "Magic the Gathering Card Tooltips",
 	            author : 'Sebastian Zaha',
-	            authorurl : 'http://deckbox.org',
+	            authorurl : 'https://deckbox.org',
 	            infourl : 'https://github.com/SebastianZaha/wordpress_mtg_tooltips',
 	            version : "3.1.0"
 	        };

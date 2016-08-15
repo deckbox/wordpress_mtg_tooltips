@@ -6,7 +6,7 @@ Description: Easily transform Magic the Gathering card names into links that sho
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
 Version: 3.1.3
-Author URI: http://deckbox.org
+Author URI: https://deckbox.org
 */
 include('lib/bbp-do-shortcodes.php');
 
@@ -85,13 +85,13 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
 
         function add_scripts() {
-            wp_enqueue_script('deckbox', 'http://deckbox.org/javascripts/tooltip.js');
+            wp_enqueue_script('deckbox', 'https://deckbox.org/javascripts/tooltip.js');
             wp_enqueue_script('deckbox_extensions', $this->_resources_dir.'tooltip_extension.js', array('jquery'));
             add_action('wp_head', array($this, 'init_css'));
         }
 
         function parse_mtg_card($atts, $content=null) {
-            return '<a class="deckbox_link" target="_blank" href="http://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
+            return '<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
         }
 
         function cleanup_shortcode_content($content) {
@@ -142,7 +142,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                     $card_name = trim($bits[2]);
                     $first_card = $first_card == null ? $card_name : $first_card;
                     $card_name = str_replace("’", "'", $card_name);
-                    $line = $bits[1] . '&nbsp;<a class="deckbox_link" target="_blank" href="http://deckbox.org/mtg/'. $card_name .
+                    $line = $bits[1] . '&nbsp;<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/'. $card_name .
                         '">' . $card_name . '</a><br />';
                     $current_body .= $line;
                     $current_count += intval($bits[1]);
@@ -166,7 +166,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 ')</span><br />' . $current_body;
 
             if ($style == 'embedded') {
-                $html .= '<td class="card_box"><img class="on_page" src="http://deckbox.org/mtg/' .
+                $html .= '<td class="card_box"><img class="on_page" src="https://deckbox.org/mtg/' .
                     $first_card . '/tooltip" /></td>';
             }
 

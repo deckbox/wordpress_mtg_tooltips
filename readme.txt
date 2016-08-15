@@ -14,7 +14,7 @@ The plugin adds a button in the visual post editor. To use it, just select the t
 that represents a Magic the Gathering card name and click the button. The card name
 will be enclosed in [mtg_card][/mtg_card] tags (or the shorthand [c][/c] tag). When
 viewing the post, the card name will show up as a link to the card's page on
-http://deckbox.org . Hovering over the link will show the card's image in a tooltip.
+https://deckbox.org . Hovering over the link will show the card's image in a tooltip.
 
 A similar tag can be used to quickly create deck listings: [mtg_deck][/mtg_deck]
 (or the shorthand [d][/d]). A deck listing should contain a list of cards and categories.
