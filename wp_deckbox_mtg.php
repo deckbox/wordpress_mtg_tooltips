@@ -5,7 +5,7 @@ Plugin URI: https://github.com/SebastianZaha/wordpress_mtg_tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
-Version: 3.1.4
+Version: 3.1.5
 Author URI: https://deckbox.org
 */
 include('lib/bbp-do-shortcodes.php');
@@ -118,7 +118,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 $response = '<h3 class="mtg_deck_title">' . $title . '</h3>';
             }
             $response .= '<table class="mtg_deck mtg_deck_' . $style .
-                '" cellspacing="0" cellpadding="0" style="width:' .
+                '" cellspacing="0" cellpadding="0" style="max-width:' .
                 $this->get_setting('deck_width') .'px;font-size:' . $this->get_setting('font_size') .
                 '%;line-height:' .$this->get_setting('line_height'). '%"><tr><td>';
 
@@ -134,6 +134,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             $current_title = '';
             $current_body = '';
             $first_card = null;
+            $second_column = false;
 
             for ($i = 0; $i < count($lines); $i++) {
                 $line = $lines[$i];
@@ -153,8 +154,12 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                         $html .= '<span style="font-weight:bold">' . $current_title . ' (' .
                             $current_count . ')</span><br />';
                         $html .= $current_body;
-                        if (preg_match("/Sideboard/", $line)) {
+                        if (preg_match("/Sideboard/", $line) && !$second_column) {
                             $html .= '</td><td>';
+                            $second_column = true;
+                        } else if (preg_match("/Lands/", $line) && !$second_column) {
+                            $html .= '</td><td>';
+                            $second_column = true;
                         } else {
                             $html .= '<br />';
                         }
