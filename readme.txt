@@ -3,7 +3,7 @@ Contributors: grimdonkey, BrentClark
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
 Tested up to: 4.3.1
-Stable tag: 3.1.5
+Stable tag: 3.1.6
 
 Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
@@ -70,6 +70,9 @@ posts will use the tag syntax.
 2. An example of a really small deck listing, produced by the code shown in the description
 
 == Changelog ==
+
+= 3.1.6 =
+* Improve responsiveness, do not force width in px. Move Lands by default to second column.
 
 = 3.1.5 =
 * Improve responsiveness, do not force width in px. Move Lands by default to second column.
