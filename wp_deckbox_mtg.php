@@ -135,6 +135,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             $current_body = '';
             $first_card = null;
             $second_column = false;
+            $html = '';
 
             for ($i = 0; $i < count($lines); $i++) {
                 $line = $lines[$i];
