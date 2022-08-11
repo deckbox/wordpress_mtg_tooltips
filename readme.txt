@@ -3,7 +3,7 @@ Contributors: grimdonkey
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
 Tested up to: 6.0.1
-Stable tag: 3.2.0
+Stable tag: 3.3.0
 
 Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over them. You can also quickly create deck listings.
 
@@ -53,6 +53,14 @@ Completely compatible: your old posts will remain the same as before, even thoug
 2. An example of a really small deck listing, produced by the code shown in the description
 
 == Changelog ==
+
+= 3.3.0 =
+* Set table width to 100% for decks. max-width is still at 510px so it should
+  not change anything for existing users. The max-width can be set from
+  the plugin options to allow larger deckview sizes.
+
+= 3.2.0 =
+* Fixed tooltips on mobile, updated wp compat to 6.0.
 
 = 3.1.6 =
 * Improve responsiveness, do not force width in px. Move Lands by default to second column.

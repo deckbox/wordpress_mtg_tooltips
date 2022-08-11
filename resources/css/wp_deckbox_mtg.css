@@ -3,6 +3,7 @@
 }
 
 table.mtg_deck {
+  width: 100%;
   max-width: 510px;
   margin: 10px;
   text-align: left;
