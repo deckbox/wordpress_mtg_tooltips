@@ -2,16 +2,16 @@
 Contributors: grimdonkey
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
-Tested up to: 6.3.0
-Stable tag: 3.3.0
+Tested up to: 6.6.2
+Stable tag: 3.4.0
 
 Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over them. You can also quickly create deck listings.
 
 == Description ==
 
-The plugin adds a button in the visual post editor. To use it, just select the text that represents a Magic the Gathering card name and click the button. The card name will be enclosed in [mtg_card][/mtg_card] tags (or the shorthand [c][/c] tag). When viewing the post, the card name will show up as a link to the card's page on https://deckbox.org . Hovering over the link will show the card's image in a tooltip.
+The plugin adds shortcodes that transform mtg card names and decks to provide a mouseover image. For cards use the [mtg_card][/mtg_card] shortcode (or the shortened version [c][/c]). When viewing the post, the card name will show up as a link to the card's page on https://deckbox.org . Hovering over the link will show the card's image in a tooltip.
 
-A similar tag can be used to quickly create deck listings: [mtg_deck][/mtg_deck] (or the shorthand [d][/d]). A deck listing should contain a list of cards and categories. All cards have a number before their name. All other lines are interpreted as category names. Do *not* include card numbers on the category name lines, they will automatically be computed and displayed by the plugin. A short example follows.
+A similar tag can be used to quickly create deck listings: [mtg_deck][/mtg_deck] (or the shortened version [d][/d]). A deck listing should contain a list of cards and categories. All cards have a number before their name. All other lines are interpreted as category names. Do *not* include card numbers on the category name lines, they will automatically be computed and displayed by the plugin. A short example follows.
 
 The default style for displaying decks is a card listing with each card having a mouseover tooltip. This style can be changed to an embedded view, where the listing has a card image to the right of the deck. This can be toggled in the plugin settings for all decks, or specifically for a deck by setting the style attribute to the tag, as can be seen below.
 
@@ -33,7 +33,7 @@ The screenshot section includes an image of the above deck listing.
 
 1. Head over to the "Install Plugins" section of your Admin Panel, and use the "Upload" link to install the zip file.
 2. Activate the plugin through the 'Plugins' menu.
-3. Use the "MtG" button in the editor, or manually write the tags.
+3. Manually write the [c] tags for cards, or add a shortcode block for decks ([d]).
 
 Alternatively, you can search for "Magic the Gathering" from the Admin panel Plugins section, select this plugin and click 'Install'.
 
@@ -53,6 +53,10 @@ Completely compatible: your old posts will remain the same as before, even thoug
 2. An example of a really small deck listing, produced by the code shown in the description
 
 == Changelog ==
+
+= 3.4.0 =
+* Rephrase the readme to refer to shortcode blocks in the visual editor, since newer wordpress versions do not have the old tinymce editor for which we had the icons.
+* Test on latest wordpress (6.6.2)
 
 = 3.3.0 =
 * Set table width to 100% for decks. max-width is still at 510px so it should
