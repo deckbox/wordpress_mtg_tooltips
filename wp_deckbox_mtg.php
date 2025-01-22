@@ -5,7 +5,7 @@ Plugin URI: https://github.com/SebastianZaha/wordpress_mtg_tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
-Version: 3.4.0
+Version: 3.5.0
 Author URI: https://deckbox.org
 */
 include('lib/bbp-do-shortcodes.php');
@@ -111,12 +111,14 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         function parse_mtg_deck($atts, $content=null) {
             extract(shortcode_atts(array(
                         "title" => null,
-                        "style" => $this->get_style_name(),
+                        "style" => null,
                     ), $atts));
 
             if ($title) {
-                $response = '<h3 class="mtg_deck_title">' . $title . '</h3>';
+                $response = '<h3 class="mtg_deck_title">' . esc_html($title) . '</h3>';
             }
+            $style = $this->get_clean_style($style);
+
             $response .= '<table class="mtg_deck mtg_deck_' . $style .
                 '" cellspacing="0" cellpadding="0" style="max-width:' .
                 $this->get_setting('deck_width') .'px;font-size:' . $this->get_setting('font_size') .
@@ -241,8 +243,17 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 			';
         }
 
-        function get_style_name() {
-            return $this->_styles[$this->get_setting('style') - 1];
+        function get_clean_style($style) {
+            // Check if $style is provided and exists in predefined styles
+            if ($style && in_array($style, $this->_styles)) {
+                return $style;
+            }
+
+            // Get the default style index from settings
+            $default_index = $this->get_setting('style') - 1;
+
+            // Ensure the default index exists in the styles array
+            return isset($this->_styles[$default_index]) ? $this->_styles[$default_index] : $this->_styles[0];
         }
 
         function get_setting($setting) {
