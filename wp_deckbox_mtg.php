@@ -5,7 +5,7 @@ Plugin URI: https://github.com/SebastianZaha/wordpress_mtg_tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
-Version: 3.5.0
+Version: 3.6.0
 Author URI: https://deckbox.org
 */
 include('lib/bbp-do-shortcodes.php');
@@ -28,6 +28,12 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         private $_styles;
         private $_resources_dir;
         private $_images_dir;
+
+        // Default settings constants
+        const DEFAULT_STYLE = 0;
+        const DEFAULT_DECK_WIDTH = 510;
+        const DEFAULT_FONT_SIZE = 100;
+        const DEFAULT_LINE_HEIGHT = 140;
 
         function __construct() {
             $this->_name = 'Magic the Gathering Card Tooltips';
@@ -200,6 +206,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                     <h3 style="font-size:14px;">General Settings</h3>
                     <div class="inside">
                       <form action="" method="post" class="deckbox_form" style="padding:20px 0;">
+                        '.wp_nonce_field('deckbox_settings_action', 'deckbox_settings_nonce', true, false).'
                         <table class="form-table">
                           <tr>
                             <th class="scope">
@@ -276,16 +283,16 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 $this->_value = json_decode($dbValue,true);
 
                 if (empty($this->_value['tooltip'][0]['style'])) {
-                    $this->_value['tooltip'][0]['style'] = 0;
+                    $this->_value['tooltip'][0]['style'] = self::DEFAULT_STYLE;
                 }
                 if (empty($this->_value['tooltip'][0]['deck_width'])) {
-                    $this->_value['tooltip'][0]['deck_width'] = 510;
+                    $this->_value['tooltip'][0]['deck_width'] = self::DEFAULT_DECK_WIDTH;
                 }
                 if (empty($this->_value['tooltip'][0]['font_size'])) {
-                    $this->_value['tooltip'][0]['font_size'] = 100;
+                    $this->_value['tooltip'][0]['font_size'] = self::DEFAULT_FONT_SIZE;
                 }
                 if (empty($this->_value['tooltip'][0]['line_height'])) {
-                    $this->_value['tooltip'][0]['line_height'] = 140;
+                    $this->_value['tooltip'][0]['line_height'] = self::DEFAULT_LINE_HEIGHT;
                 }
 
                 $this->_initialValue = $this->_value;
@@ -300,11 +307,23 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 
         function handlePostback() {
             if (isset($_POST['isPostback'])) {
+                // Validate the nonce
+                if (!isset($_POST['deckbox_settings_nonce']) ||
+                    !wp_verify_nonce($_POST['deckbox_settings_nonce'], 'deckbox_settings_action')) {
+                    wp_die('Security check failed!');
+                }
+
+                // Check user capabilities
+                if (!current_user_can('manage_options')) {
+                    wp_die('You do not have sufficient permissions to access this page.');
+                }
+
                 $v = array();
-                $v['tooltip'][] = array('style' => $_POST['tooltip_style'],
-                                  'deck_width' => $_POST['tooltip_deck_width'],
-                                  'font_size' => $_POST['tooltip_font_size'],
-                                  'line_height' => $_POST['tooltip_line_height']);
+                $v['tooltip'][] = array(
+                    'style' => isset($_POST['tooltip_style']) ? absint($_POST['tooltip_style']) : self::DEFAULT_STYLE,
+                    'deck_width' => isset($_POST['tooltip_deck_width']) ? absint($_POST['tooltip_deck_width']) : self::DEFAULT_DECK_WIDTH,
+                    'font_size' => isset($_POST['tooltip_font_size']) ? absint($_POST['tooltip_font_size']) : self::DEFAULT_FONT_SIZE,
+                    'line_height' => isset($_POST['tooltip_line_height']) ? absint($_POST['tooltip_line_height']) : self::DEFAULT_LINE_HEIGHT);
                 $this->_value = $v;
                 $this->save();
             }
