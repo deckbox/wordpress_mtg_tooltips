@@ -137,7 +137,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 return '';
             }
 
-            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="width:'.$size.';height:'.$size.';" >';
+            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="height:'.$size.';" >';
         }
 
         function cleanup_shortcode_content($content) {
