@@ -67,6 +67,8 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             add_shortcode('mtg_deck', array($this,'parse_mtg_deck'));
             add_shortcode('deck', array($this,'parse_mtg_deck'));
             add_shortcode('d', array($this,'parse_mtg_deck'));
+			add_shortcode('s', array($this,'parse_mtg_symbol'));
+			add_shortcode('symbol', array($this, 'parse_mtg_symbol'));
         }
 
         function add_buttons() {
@@ -98,6 +100,17 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 
         function parse_mtg_card($atts, $content=null) {
             return '<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
+        }
+
+        function parse_mtg_symbol($atts, $content=null) {
+            extract(shortcode_atts(array(
+                        "size" => null,
+                        "symbol" => null,
+                    ), $atts));
+			if (!$size) {
+				$size = '1em';
+			}
+            return '<img src="'.plugins_url( 'images/'.strtolower($symbol).'.svg', __FILE__ ).'" style="width:'.$size.';height:'.$size.';" >';
         }
 
         function cleanup_shortcode_content($content) {
@@ -337,3 +350,4 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
     }
 }
+
