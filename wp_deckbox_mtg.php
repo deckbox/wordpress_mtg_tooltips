@@ -41,7 +41,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                                     'WU', 'WB', 'UR', 'UB', 'BR', 'BG', 'RG', 'RW', 'GW', 'GU',
                                     '2W', '2U', '2B', '2R', '2G',
                                     'WP', 'UP', 'BP', 'RP', 'GP',
-                                    'UB', 'GW', 'BG', 'BR', 'GU', 'GW', 'RG', 'RW', 'UB', 'UR', 'WB', 'WU'
+                                    'UB', 'GW', 'BG', 'BR', 'GU', 'GW', 'RG', 'RW', 'UB', 'UR', 'WB', 'WU',
                                     'X', 'Y', 'Z',
                                     'TAP', 'UNTAP',
                                     'UNTAPCOST',
