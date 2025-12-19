@@ -129,14 +129,15 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 return '';
             }
 
-            if (preg_match('^(auto|0|(\d*\.?\d+(px|em|ex|%|in|cm|mm|pt|pc|vh|vw|vmin|vmax)?))$', $size) !== 1 && $size !== '')
-            {
-                return '';
-            }
-
 			if (!$size) {
 				$size = '1em';
 			}
+            preg_match('^(auto|0|(\d*\.?\d+(px|em|ex|%|in|cm|mm|pt|pc|vh|vw|vmin|vmax)?))$', $size, $matches);
+
+            if ($matches === 0)
+            {
+                return '';
+            }
 
             return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="width:'.$size.';height:'.$size.';" >';
         }
