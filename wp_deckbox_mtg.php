@@ -132,10 +132,10 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 			if (!$size) {
 				$size = '1em';
 			}
+
             preg_match('^(auto|0|(\d*\.?\d+(px|em|ex|%|in|cm|mm|pt|pc|vh|vw|vmin|vmax)?))$', $size, $matches);
 
-            if ($matches === 0)
-            {
+            if ($matches === 0) {
                 return '';
             }
 
