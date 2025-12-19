@@ -129,6 +129,11 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 return '';
             }
 
+            if (preg_match('^(auto|0|(\d*\.?\d+(px|em|ex|%|in|cm|mm|pt|pc|vh|vw|vmin|vmax)?))$') !== 1 && $size !== '')
+            {
+                return '';
+            }
+
 			if (!$size) {
 				$size = '1em';
 			}
