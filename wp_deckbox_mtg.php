@@ -35,6 +35,19 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         const DEFAULT_FONT_SIZE = 100;
         const DEFAULT_LINE_HEIGHT = 140;
 
+        private $validSymbols = [
+                                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15','16', '17', '18', '19', '20', '100', '1000000',
+                                    'W', 'U', 'B', 'R', 'G',
+                                    'WU', 'WB', 'UR', 'UB', 'BR', 'BG', 'RG', 'RW', 'GW', 'GU',
+                                    '2W', '2U', '2B', '2R', '2G',
+                                    'WP', 'UP', 'BP', 'RP', 'GP',
+                                    'UB', 'GW', 'BG', 'BR', 'GU', 'GW', 'RG', 'RW', 'UB', 'UR', 'WB', 'WU'
+                                    'X', 'Y', 'Z',
+                                    'TAP', 'UNTAP',
+                                    'UNTAPCOST',
+                                    'TAPOLD', 'WOLD', 'HALF', 'INF'
+                                ];
+
         function __construct() {
             $this->_name = 'Magic the Gathering Card Tooltips';
             $this->_optionName = 'deckbox_tooltip_options';
@@ -107,10 +120,20 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                         "size" => null,
                         "symbol" => null,
                     ), $atts));
+
+            if (in_array(strtoupper($symbol), $this->validSymbols)) {
+                $symbol = strtolower($symbol);
+            } else if (in_array(strtoupper($symbol), $this->validSymbols)) {
+                $symbol = strtolower($symbol);
+            } else {
+                return '';
+            }
+
 			if (!$size) {
 				$size = '1em';
 			}
-            return '<img src="'.plugins_url( 'images/'.strtolower($symbol).'.svg', __FILE__ ).'" style="width:'.$size.';height:'.$size.';" >';
+
+            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="width:'.$size.';height:'.$size.';" >';
         }
 
         function cleanup_shortcode_content($content) {
