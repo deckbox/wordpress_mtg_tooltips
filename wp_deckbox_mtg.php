@@ -123,8 +123,6 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 
             if (in_array(strtoupper($symbol), $this->validSymbols)) {
                 $symbol = strtolower($symbol);
-            } else if (in_array(strtoupper($symbol), $this->validSymbols)) {
-                $symbol = strtolower($symbol);
             } else {
                 return '';
             }
