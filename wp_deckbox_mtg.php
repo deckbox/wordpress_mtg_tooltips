@@ -131,13 +131,23 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 				$size = '1em';
 			}
 
+            $sizeUnits = preg_replace('/[0-9]/', '', $size);
+
             preg_match('^(auto|0|(\d*\.?\d+(px|em|ex|%|in|cm|mm|pt|pc|vh|vw|vmin|vmax)?))$', $size, $matches);
 
             if ($matches === 0) {
                 return '';
             }
 
-            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="height:'.$size.';box-shadow:-0.06em .07em 0 #111,0 .06em 0 #111;border-radius:50%;margin-right:2%;" >';
+            $sizeh = $sizew= (float) filter_var($size, FILTER_SANITIZE_NUMBER_FLOAT);
+
+            if ($symbol == '1000000') {
+                $sizew = $sizeh * 5.07;
+            } else if ($symbol === '100') {
+                $sizew = $sizeh * 1.88;
+            }
+
+            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="height:'.$sizeh.$sizeUnits.';width:'.$sizew.$sizeUnits.';box-shadow:-0.06em .07em 0 #111,0 .06em 0 #111;border-radius:1em;" >';
         }
 
         function cleanup_shortcode_content($content) {
