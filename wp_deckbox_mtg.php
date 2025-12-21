@@ -147,7 +147,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 $sizew = $sizeh * 1.88;
             }
 
-            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="height:'.$sizeh.$sizeUnits.';width:'.$sizew.$sizeUnits.';box-shadow:-0.06em .07em 0 #111,0 .06em 0 #111;border-radius:1em;" >';
+            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="height:'.$sizeh.$sizeUnits.';width:'.$sizew.$sizeUnits.';border-radius:'.$sizeh.$sizeUnits.';" >';
         }
 
         function cleanup_shortcode_content($content) {
