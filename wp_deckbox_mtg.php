@@ -48,6 +48,8 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                                     'TAPOLD', 'WOLD', 'HALF', 'INF'
                                 ];
 
+        private $validShadowsDisablement = ['false', '0'];
+
         function __construct() {
             $this->_name = 'Magic the Gathering Card Tooltips';
             $this->_optionName = 'deckbox_tooltip_options';
@@ -119,6 +121,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             extract(shortcode_atts(array(
                         "size" => null,
                         "symbol" => null,
+                        "shadow" => null
                     ), $atts));
 
             if (in_array(strtoupper($symbol), $this->validSymbols)) {
@@ -139,7 +142,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 return '';
             }
 
-            $sizeh = $sizew= (float) filter_var($size, FILTER_SANITIZE_NUMBER_FLOAT);
+            $sizeh = $sizew = (float) filter_var($size, FILTER_SANITIZE_NUMBER_FLOAT);
 
             if ($symbol == '1000000') {
                 $sizew = $sizeh * 5.07;
@@ -147,9 +150,15 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 $sizew = $sizeh * 1.88;
             }
 
-            $sizShadow = $sizeh * 0.05;
+            if (!in_array(strtolower($shadow), $this->validShadowsDisablement)) {
+                $sizeShadow = $sizeh * 0.05;
 
-            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="height:'.$sizeh.$sizeUnits.';width:'.$sizew.$sizeUnits.';box-shadow: -'.$sizShadow.$sizeUnits.' '.$sizShadow.$sizeUnits.' 0 #000000;border-radius:'.$sizeh.$sizeUnits.';" >';
+                $shadow = 'box-shadow: -'.$sizeShadow.$sizeUnits.' '.$sizeShadow.$sizeUnits.' 0 #000000;border-radius:'.$sizeh.$sizeUnits.';';
+            } else {
+                $shadow = '';
+            }
+
+            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="height:'.$sizeh.$sizeUnits.';width:'.$sizew.$sizeUnits.';'.$shadow.'" >';
         }
 
         function cleanup_shortcode_content($content) {
