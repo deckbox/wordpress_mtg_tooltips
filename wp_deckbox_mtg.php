@@ -18,7 +18,6 @@ function deckbox_launch_tooltip_plugin() {
     $tp = new Deckbox_Tooltip_plugin();
 }
 
-
 if (! class_exists('Deckbox_Tooltip_plugin')) {
     class Deckbox_Tooltip_plugin {
         private $_name;
@@ -84,6 +83,8 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             add_shortcode('d', array($this,'parse_mtg_deck'));
 			add_shortcode('s', array($this,'parse_mtg_symbol'));
 			add_shortcode('symbol', array($this, 'parse_mtg_symbol'));
+			add_shortcode('color_identity', array($this, 'parse_color_identity'));
+			add_shortcode('ci', array($this, 'parse_color_identity'));
         }
 
         function add_buttons() {
@@ -116,6 +117,29 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         function parse_mtg_card($atts, $content=null) {
             return '<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
         }
+
+		function parse_color_identity($atts, $content=null) {
+            extract(shortcode_atts(array(
+                        "size" => null,
+                        "colors" => null,
+                        "shadow" => null,
+						"meta_custom_field" => null
+                    ), $atts));
+
+			if ($colors === null) {
+				$colors = get_post_meta(get_the_id(), $meta_custom_field, true);
+			}
+
+			$colorsArray = str_split($colors);
+
+			$line = '';
+
+			foreach ($colorsArray as $color) {
+				$line .= $this->parse_mtg_symbol(['symbol' => $color, 'size' => $size, 'shadow' => $shadow]).' ';
+			}
+
+			return $line;
+		}
 
         function parse_mtg_symbol($atts, $content=null) {
             extract(shortcode_atts(array(
@@ -179,6 +203,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             extract(shortcode_atts(array(
                         "title" => null,
                         "style" => null,
+						"meta_custom_field" => null
                     ), $atts));
 
             if ($title) {
@@ -191,7 +216,12 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 $this->get_setting('deck_width') .'px;font-size:' . $this->get_setting('font_size') .
                 '%;line-height:' .$this->get_setting('line_height'). '%"><tr><td>';
 
-            $lines = $this->cleanup_shortcode_content($content);
+			$lines = $this->cleanup_shortcode_content($content);
+
+			if ($content === '' && $meta_custom_field !== null) {
+				$lines = $this->cleanup_shortcode_content(get_post_meta(get_the_ID(), $meta_custom_field, true));
+			}
+
             $response .= $this->parse_mtg_deck_lines($lines, $style) . '</td>';
             $response .= '</tr></table>';
 
