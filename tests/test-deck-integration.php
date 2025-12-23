@@ -5,9 +5,6 @@
  * @package Magic_The_Gathering_Card_Tooltips
  */
 
-/**
- * Integration tests for deck shortcode rendering.
- */
 class DeckIntegrationTest extends WP_UnitTestCase {
 
 	private $plugin;
@@ -17,9 +14,6 @@ class DeckIntegrationTest extends WP_UnitTestCase {
 		$this->plugin = new Deckbox_Tooltip_plugin();
 	}
 
-	/**
-	 * Test shortcodes generate proper deckbox links and structure.
-	 */
 	public function test_shortcodes_generate_proper_html() {
 		// Test card shortcode
 		$card_output = do_shortcode( '[card]Lightning Bolt[/card]' );
@@ -42,9 +36,6 @@ Creatures
 		$this->assertStringContainsString( 'mtg_deck', do_shortcode( '[d]4 Sol Ring[/d]' ) );
 	}
 
-	/**
-	 * Test deck with Sideboard and Lands triggers column breaks.
-	 */
 	public function test_deck_column_breaks() {
 		$content = '[deck]
 Creatures
@@ -65,9 +56,6 @@ Sideboard
 		$this->assertStringContainsString( 'Sideboard (3)', $output );
 	}
 
-	/**
-	 * Test WordPress post with deck shortcode (end-to-end).
-	 */
 	public function test_post_with_deck_shortcode() {
 		$post_id = $this->factory->post->create( array(
 			'post_title'   => 'My Deck List',
@@ -85,9 +73,6 @@ Sideboard
 		$this->assertStringContainsString( 'Urza&#8217;s Saga', $output );
 	}
 
-	/**
-	 * Test embedded style shows card image.
-	 */
 	public function test_embedded_style() {
 		$content = '[deck style="embedded"]4 Lightning Bolt[/deck]';
 		$output = do_shortcode( $content );

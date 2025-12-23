@@ -5,9 +5,6 @@
  * @package Magic_The_Gathering_Card_Tooltips
  */
 
-/**
- * Test case for deck parsing functionality.
- */
 class DeckParserTest extends WP_UnitTestCase {
 
 	private $plugin;
@@ -17,9 +14,6 @@ class DeckParserTest extends WP_UnitTestCase {
 		$this->plugin = new Deckbox_Tooltip_plugin();
 	}
 
-	/**
-	 * Test parsing deck with multiple categories.
-	 */
 	public function test_parse_multiple_categories() {
 		$lines = array(
 			'Creatures',
@@ -48,9 +42,6 @@ class DeckParserTest extends WP_UnitTestCase {
 		$this->assertEquals( 'Sideboard', $result[3]['name'] );
 	}
 
-	/**
-	 * Test parsing cards with apostrophes and no category.
-	 */
 	public function test_parse_cards_with_apostrophes_and_no_category() {
 		$lines = array(
 			'4 Urza\'s Saga',
@@ -67,9 +58,6 @@ class DeckParserTest extends WP_UnitTestCase {
 		$this->assertEquals( 1, $result[0]['cards'][2]['count'] );
 	}
 
-	/**
-	 * Test parsing cards with set codes (MTG Arena format).
-	 */
 	public function test_parse_cards_with_set_codes() {
 		$lines = array(
 			'1 Adventurer\'s Inn (FIN) 271',
@@ -94,9 +82,6 @@ class DeckParserTest extends WP_UnitTestCase {
 		$this->assertEquals( 'Aerith Rescue Mission', $result[0]['cards'][2]['name'] );
 	}
 
-	/**
-	 * Test that title with HTML/script is properly escaped.
-	 */
 	public function test_deck_title_escapes_html() {
 		$content = '[mtg_deck title="My Deck\'s & Yours <script>alert(\'xss\')</script>"]
 3 Lightning Bolt
