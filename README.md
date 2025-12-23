@@ -48,3 +48,19 @@ pretty sure the code here is not *the right way to do it*.
 
 I'll gladly accept pull requests with improvements and / or code cleanup.
 
+For testing:
+```
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+mv wp-cli.phar ~/.local/bin/wp
+
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar ~/.local/bin/composer
+
+# Setup test database:
+bash bin/install-wp-tests.sh wordpress_test some_username 'password' localhost
+
+composer install
+```
+
+Run the tests with `composer test`

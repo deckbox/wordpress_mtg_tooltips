@@ -120,6 +120,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                         "style" => null,
                     ), $atts));
 
+            $response = '';
             if ($title) {
                 $response = '<h3 class="mtg_deck_title">' . esc_html($title) . '</h3>';
             }
@@ -137,47 +138,91 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             return $response;
         }
 
+        function parse_deck_structure($lines) {
+            $categories = array();
+            $current_category = array('name' => '', 'cards' => array());
+
+            foreach ($lines as $line) {
+                if (preg_match('/^([0-9]+)(.*)/', $line, $bits)) {
+                    // This is a card line
+                    $card_count = intval($bits[1]);
+                    $card_name = trim($bits[2]);
+                    $card_name = str_replace("'", "'", $card_name);
+
+                    $current_category['cards'][] = array(
+                        'count' => $card_count,
+                        'name' => $card_name
+                    );
+                } else {
+                    // This is a category header
+                    // If we have a previous category with cards, save it
+                    if (!empty($current_category['cards']) || $current_category['name'] !== '') {
+                        $categories[] = $current_category;
+                    }
+
+                    // Start a new category
+                    $current_category = array('name' => $line, 'cards' => array());
+                }
+            }
+
+            // Don't forget the last category
+            if (!empty($current_category['cards']) || $current_category['name'] !== '') {
+                $categories[] = $current_category;
+            }
+
+            return $categories;
+        }
+
         function parse_mtg_deck_lines($lines, $style) {
-            $current_count = 0;
-            $current_title = '';
-            $current_body = '';
+            $categories = $this->parse_deck_structure($lines);
+
             $first_card = null;
             $second_column = false;
             $html = '';
 
-            for ($i = 0; $i < count($lines); $i++) {
-                $line = $lines[$i];
+            foreach ($categories as $index => $category) {
+                $category_name = $category['name'];
+                $cards = $category['cards'];
 
-                if (preg_match('/^([0-9]+)(.*)/', $line, $bits)) {
-                    $card_name = trim($bits[2]);
-                    $first_card = $first_card == null ? $card_name : $first_card;
-                    $card_name = str_replace("’", "'", $card_name);
-                    $line = $bits[1] . '&nbsp;<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/'. $card_name .
-                        '">' . $card_name . '</a><br />';
-                    $current_body .= $line;
-                    $current_count += intval($bits[1]);
-                } else {
-                    // Beginning of a new category. If this was not the first one, we put the previous one
-                    // into the response body.
-                    if ($current_title != "") {
-                        $html .= '<span style="font-weight:bold">' . $current_title . ' (' .
-                            $current_count . ')</span><br />';
-                        $html .= $current_body;
-                        if (preg_match("/Sideboard/", $line) && !$second_column) {
+                // Calculate total count for this category
+                $total_count = 0;
+                $category_body = '';
+
+                foreach ($cards as $card) {
+                    if ($first_card === null) {
+                        $first_card = $card['name'];
+                    }
+
+                    $category_body .= $card['count'] . '&nbsp;<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' .
+                        $card['name'] . '">' . $card['name'] . '</a><br />';
+                    $total_count += $card['count'];
+                }
+
+                // Only render category if it has cards
+                if (!empty($cards)) {
+                    // Render category header (skip if first category has no name)
+                    if ($index > 0 || $category_name !== '') {
+                        $html .= '<span style="font-weight:bold">' . $category_name . ' (' .
+                            $total_count . ')</span><br />';
+                    }
+
+                    $html .= $category_body;
+
+                    // Handle column breaks
+                    if ($index < count($categories) - 1) {
+                        $next_category_name = $categories[$index + 1]['name'];
+                        if (preg_match("/Sideboard/", $next_category_name) && !$second_column) {
                             $html .= '</td><td>';
                             $second_column = true;
-                        } else if (preg_match("/Lands/", $line) && !$second_column) {
+                        } else if (preg_match("/Lands/", $next_category_name) && !$second_column) {
                             $html .= '</td><td>';
                             $second_column = true;
                         } else {
                             $html .= '<br />';
                         }
                     }
-                    $current_title = $line; $current_count = 0; $current_body = '';
                 }
             }
-            $html .= '<span style="font-weight:bold">' . $current_title . ' (' . $current_count .
-                ')</span><br />' . $current_body;
 
             if ($style == 'embedded') {
                 $html .= '<td class="card_box"><img class="on_page" src="https://deckbox.org/mtg/' .
