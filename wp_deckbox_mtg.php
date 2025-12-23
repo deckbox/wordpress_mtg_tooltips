@@ -115,6 +115,14 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
 
         function parse_mtg_card($atts, $content=null) {
+			extract(shortcode_atts(array(
+				"meta_custom_field" => null
+			), $atts));
+
+            if ($content === '') {
+				$content = get_post_meta(get_the_id(), $meta_custom_field, true);
+			}
+
             return '<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
         }
 
