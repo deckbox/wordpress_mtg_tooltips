@@ -5,7 +5,7 @@ Plugin URI: https://github.com/SebastianZaha/wordpress_mtg_tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
-Version: 3.6.0
+Version: 3.7.0
 Author URI: https://deckbox.org
 */
 include('lib/bbp-do-shortcodes.php');
@@ -97,6 +97,22 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
 
         function parse_mtg_card($atts, $content=null) {
+            if (preg_match('/^(.+?)(?:\s+\(([A-Za-z0-9]+)\)(?:\s+(\d+))?)?$/', $content, $bits)) {
+                $card_name = trim($bits[1]);
+                $set_code = isset($bits[2]) && $bits[2] !== '' ? strtoupper($bits[2]) : null;
+                $collector_nr = isset($bits[3]) && $bits[3] !== '' ? $bits[3] : null;
+
+                $url = 'https://deckbox.org/mtg/' . $card_name;
+                if ($set_code) {
+                    $url .= '?set=' . $set_code;
+                    if ($collector_nr) {
+                        $url .= '&nr=' . $collector_nr;
+                    }
+                }
+
+                return '<a class="deckbox_link" target="_blank" href="' . esc_attr($url) . '">' . $card_name . '</a>';
+            }
+
             return '<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
         }
 
@@ -143,15 +159,20 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             $current_category = array('name' => '', 'cards' => array());
 
             foreach ($lines as $line) {
-                if (preg_match('/^([0-9]+)(.*)/', $line, $bits)) {
-                    // This is a card line
+                if (preg_match('/^(\d+)\s+(.+?)(?:\s+\(([A-Za-z0-9]+)\)(?:\s+(\d+))?)?$/', $line, $bits)) {
+                    // This is a card line with optional Arena format: "1 Card Name (SET) 123"
                     $card_count = intval($bits[1]);
                     $card_name = trim($bits[2]);
                     $card_name = str_replace("'", "'", $card_name);
 
+                    $set_code = isset($bits[3]) && $bits[3] !== '' ? strtoupper($bits[3]) : null;
+                    $collector_nr = isset($bits[4]) && $bits[4] !== '' ? $bits[4] : null;
+
                     $current_category['cards'][] = array(
                         'count' => $card_count,
-                        'name' => $card_name
+                        'name' => $card_name,
+                        'set' => $set_code,
+                        'nr' => $collector_nr
                     );
                 } else {
                     // This is a category header
@@ -193,8 +214,16 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                         $first_card = $card['name'];
                     }
 
-                    $category_body .= $card['count'] . '&nbsp;<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' .
-                        $card['name'] . '">' . $card['name'] . '</a><br />';
+                    $url = 'https://deckbox.org/mtg/' . $card['name'];
+                    if ($card['set']) {
+                        $url .= '?set=' . $card['set'];
+                        if ($card['nr']) {
+                            $url .= '&nr=' . $card['nr'];
+                        }
+                    }
+
+                    $category_body .= $card['count'] . '&nbsp;<a class="deckbox_link" target="_blank" href="' .
+                        esc_attr($url) . '">' . $card['name'] . '</a><br />';
                     $total_count += $card['count'];
                 }
 
