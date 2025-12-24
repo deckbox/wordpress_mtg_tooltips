@@ -138,7 +138,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             $tooltip_params = '';
             if ($set_code) {
                 $url .= '?set=' . $set_code;
-                $tooltip_params .= 'set=' . $set_code;
+                $tooltip_params .= '?set=' . $set_code;
                 if ($collector_nr) {
                     $url .= '&nr=' . $collector_nr;
                     $tooltip_params .= '&nr=' . $collector_nr;
@@ -237,8 +237,15 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             extract(shortcode_atts(array(
                         "title" => null,
                         "style" => null,
-						"meta_custom_field" => null
+						"meta_custom_field" => null,
+                        "show_specific_card_details" => null
                     ), $atts));
+
+            if ($show_specific_card_details === 'true' || $show_specific_card_details === '1') {
+                $showSpecificCardDetails = true;
+            } else {
+                $showSpecificCardDetails = false;
+            }
 
             $response = '';
             if ($title) {
@@ -257,7 +264,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 				$lines = $this->cleanup_shortcode_content(get_post_meta(get_the_ID(), $meta_custom_field, true));
 			}
 
-            $response .= $this->parse_mtg_deck_lines($lines, $style) . '</td>';
+            $response .= $this->parse_mtg_deck_lines($lines, $style, $showSpecificCardDetails) . '</td>';
             $response .= '</tr></table>';
 
             return $response;
@@ -303,7 +310,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             return $categories;
         }
 
-        function parse_mtg_deck_lines($lines, $style) {
+        function parse_mtg_deck_lines($lines, $style, $showSpecificCardDetails = false) {
             $categories = $this->parse_deck_structure($lines);
 
             $first_card = null;
@@ -332,7 +339,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                     }
 
                     $category_body .= $card['count'] . '&nbsp;<a class="deckbox_link" target="_blank" href="' .
-                        esc_attr($url) . '">' . $card['name'] . '</a><br />';
+                        esc_attr($url) . '">' . $card['name'] . ($showSpecificCardDetails && $card['set'] ? ' (' . $card['set'] . ') ' . $card['nr'] : '') . '</a><br />';
                     $total_count += $card['count'];
                 }
 
