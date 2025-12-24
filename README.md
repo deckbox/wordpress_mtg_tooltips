@@ -70,6 +70,13 @@ Both formats work:
 - With set/number: `[card]Card Name (SET) 123[/card]`
 - Without: `[card]Card Name[/card]`
 
+You can also display cards inline with the embedded style instead of showing them as tooltips:
+
+```
+[card style="embedded"]Lightning Bolt[/card]
+[c style="embedded"]Tarmogoyf (FUT) 153[/c]
+```
+
 
 Support and Development
 -----------------------

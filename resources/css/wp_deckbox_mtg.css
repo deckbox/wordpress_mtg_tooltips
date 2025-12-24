@@ -18,5 +18,18 @@ table.mtg_deck td {
 table.mtg_deck td.card_box img {
   max-height: 310px !important;
   max-width: 310px !important;
+  border-radius: 4.75% / 3.5%;
 }
 
+a.deckbox_link:has(img) {
+  display: block;
+  width: fit-content;
+  margin: 10px auto;
+}
+
+a.deckbox_link img {
+  display: block;
+  max-height: 310px !important;
+  max-width: 310px !important;
+  border-radius: 4.75% / 3.5%;
+}

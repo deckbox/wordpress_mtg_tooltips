@@ -5,7 +5,7 @@ Plugin URI: https://github.com/SebastianZaha/wordpress_mtg_tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
-Version: 3.7.0
+Version: 3.8.0
 Author URI: https://deckbox.org
 */
 include('lib/bbp-do-shortcodes.php');
@@ -97,23 +97,34 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
 
         function parse_mtg_card($atts, $content=null) {
+            extract(shortcode_atts(array("style" => null), $atts));
+
+            $card_name = $content;
+            $set_code = null;
+            $collector_nr = null;
+
             if (preg_match('/^(.+?)(?:\s+\(([A-Za-z0-9]+)\)(?:\s+(\d+))?)?$/', $content, $bits)) {
                 $card_name = trim($bits[1]);
                 $set_code = isset($bits[2]) && $bits[2] !== '' ? strtoupper($bits[2]) : null;
                 $collector_nr = isset($bits[3]) && $bits[3] !== '' ? $bits[3] : null;
-
-                $url = 'https://deckbox.org/mtg/' . $card_name;
-                if ($set_code) {
-                    $url .= '?set=' . $set_code;
-                    if ($collector_nr) {
-                        $url .= '&nr=' . $collector_nr;
-                    }
-                }
-
-                return '<a class="deckbox_link" target="_blank" href="' . esc_attr($url) . '">' . $card_name . '</a>';
             }
 
-            return '<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
+            $url = 'https://deckbox.org/mtg/' . $card_name;
+            $tooltip_params = '';
+            if ($set_code) {
+                $url .= '?set=' . $set_code;
+                $tooltip_params .= 'set=' . $set_code;
+                if ($collector_nr) {
+                    $url .= '&nr=' . $collector_nr;
+                    $tooltip_params .= '&nr=' . $collector_nr;
+                }
+            }
+
+            $link_content = ($style === 'embedded')
+                ? '<img src="https://deckbox.org/mtg/' . $card_name . esc_attr($tooltip_params) . '/tooltip'  . '" alt="' . esc_attr($card_name) . '" />'
+                : $card_name;
+
+            return '<a class="deckbox_link" target="_blank" href="' . esc_attr($url) . '">' . $link_content . '</a>';
         }
 
         function cleanup_shortcode_content($content) {

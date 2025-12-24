@@ -3,7 +3,7 @@ Contributors: grimdonkey
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
 Tested up to: 6.9
-Stable tag: 3.7.0
+Stable tag: 3.8.0
 
 Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over them. You can also quickly create deck listings.
 
@@ -28,6 +28,11 @@ The default style for displaying decks is a card listing with each card having a
     [/d]
 
 The screenshot section includes an image of the above deck listing.
+
+**Embedded Card Display**: Individual card shortcodes also support the embedded style, displaying the card image inline instead of as a tooltip:
+
+    [card style="embedded"]Lightning Bolt[/card]
+    [c style="embedded"]Tarmogoyf (FUT) 153[/c]
 
 **Arena Format Support**: You can now paste deck lists directly from MTG Arena (or other compatible exports - like Moxfield) with set codes and collector numbers:
 
@@ -63,6 +68,11 @@ Completely compatible: your old posts will remain the same as before, even thoug
 2. An example of a really small deck listing, produced by the code shown in the description
 
 == Changelog ==
+
+= 3.8.0 =
+* Add embedded style support for individual card shortcodes
+* Cards with style="embedded" display the card image inline instead of as a tooltip
+* Add rounded corners to card images for better visual appearance
 
 = 3.7.0 =
 * Add support for MTG Arena deck format with set codes and collector numbers
