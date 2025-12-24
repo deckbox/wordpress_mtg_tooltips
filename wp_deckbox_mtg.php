@@ -117,6 +117,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         function parse_mtg_card($atts, $content=null) {
             extract(shortcode_atts(array(
                 "style" => null,
+                "size" => '310px',
                 "meta_custom_field" => null
             ), $atts));
 
@@ -146,7 +147,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             }
 
             $link_content = ($style === 'embedded')
-                ? '<img src="https://deckbox.org/mtg/' . $card_name . esc_attr($tooltip_params) . '/tooltip'  . '" alt="' . esc_attr($card_name) . '" />'
+                ? '<img src="https://deckbox.org/mtg/' . $card_name . esc_attr($tooltip_params) . '/tooltip'  . '" style="max-height:' .$size. '" alt="' . esc_attr($card_name) . '" />'
                 : $card_name;
 
             return '<a class="deckbox_link" target="_blank" href="' . esc_attr($url) . '">' . $link_content . '</a>';
