@@ -5,7 +5,7 @@ Plugin URI: https://github.com/SebastianZaha/wordpress_mtg_tooltips
 Description: Easily transform Magic the Gathering card names into links that show the card
 image in a tooltip when hovering over them. You can also quickly create deck listings.
 Author: Sebastian Zaha
-Version: 3.6.0
+Version: 3.8.0
 Author URI: https://deckbox.org
 */
 include('lib/bbp-do-shortcodes.php');
@@ -115,15 +115,41 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
 
         function parse_mtg_card($atts, $content=null) {
-			extract(shortcode_atts(array(
-				"meta_custom_field" => null
-			), $atts));
+            extract(shortcode_atts(array(
+                "style" => null,
+                "meta_custom_field" => null
+            ), $atts));
 
             if ($content === '') {
 				$content = get_post_meta(get_the_id(), $meta_custom_field, true);
 			}
 
-            return '<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/' . $content . '">' . $content . '</a>';
+            $card_name = $content;
+            $set_code = null;
+            $collector_nr = null;
+
+            if (preg_match('/^(.+?)(?:\s+\(([A-Za-z0-9]+)\)(?:\s+(\d+))?)?$/', $content, $bits)) {
+                $card_name = trim($bits[1]);
+                $set_code = isset($bits[2]) && $bits[2] !== '' ? strtoupper($bits[2]) : null;
+                $collector_nr = isset($bits[3]) && $bits[3] !== '' ? $bits[3] : null;
+            }
+
+            $url = 'https://deckbox.org/mtg/' . $card_name;
+            $tooltip_params = '';
+            if ($set_code) {
+                $url .= '?set=' . $set_code;
+                $tooltip_params .= 'set=' . $set_code;
+                if ($collector_nr) {
+                    $url .= '&nr=' . $collector_nr;
+                    $tooltip_params .= '&nr=' . $collector_nr;
+                }
+            }
+
+            $link_content = ($style === 'embedded')
+                ? '<img src="https://deckbox.org/mtg/' . $card_name . esc_attr($tooltip_params) . '/tooltip'  . '" alt="' . esc_attr($card_name) . '" />'
+                : $card_name;
+
+            return '<a class="deckbox_link" target="_blank" href="' . esc_attr($url) . '">' . $link_content . '</a>';
         }
 
 		function parse_color_identity($atts, $content=null) {
@@ -214,6 +240,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
 						"meta_custom_field" => null
                     ), $atts));
 
+            $response = '';
             if ($title) {
                 $response = '<h3 class="mtg_deck_title">' . esc_html($title) . '</h3>';
             }
@@ -236,47 +263,104 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             return $response;
         }
 
+        function parse_deck_structure($lines) {
+            $categories = array();
+            $current_category = array('name' => '', 'cards' => array());
+
+            foreach ($lines as $line) {
+                if (preg_match('/^(\d+)\s+(.+?)(?:\s+\(([A-Za-z0-9]+)\)(?:\s+(\d+))?)?$/', $line, $bits)) {
+                    // This is a card line with optional Arena format: "1 Card Name (SET) 123"
+                    $card_count = intval($bits[1]);
+                    $card_name = trim($bits[2]);
+                    $card_name = str_replace("'", "'", $card_name);
+
+                    $set_code = isset($bits[3]) && $bits[3] !== '' ? strtoupper($bits[3]) : null;
+                    $collector_nr = isset($bits[4]) && $bits[4] !== '' ? $bits[4] : null;
+
+                    $current_category['cards'][] = array(
+                        'count' => $card_count,
+                        'name' => $card_name,
+                        'set' => $set_code,
+                        'nr' => $collector_nr
+                    );
+                } else {
+                    // This is a category header
+                    // If we have a previous category with cards, save it
+                    if (!empty($current_category['cards']) || $current_category['name'] !== '') {
+                        $categories[] = $current_category;
+                    }
+
+                    // Start a new category
+                    $current_category = array('name' => $line, 'cards' => array());
+                }
+            }
+
+            // Don't forget the last category
+            if (!empty($current_category['cards']) || $current_category['name'] !== '') {
+                $categories[] = $current_category;
+            }
+
+            return $categories;
+        }
+
         function parse_mtg_deck_lines($lines, $style) {
-            $current_count = 0;
-            $current_title = '';
-            $current_body = '';
+            $categories = $this->parse_deck_structure($lines);
+
             $first_card = null;
             $second_column = false;
             $html = '';
 
-            for ($i = 0; $i < count($lines); $i++) {
-                $line = $lines[$i];
+            foreach ($categories as $index => $category) {
+                $category_name = $category['name'];
+                $cards = $category['cards'];
 
-                if (preg_match('/^([0-9]+)(.*)/', $line, $bits)) {
-                    $card_name = trim($bits[2]);
-                    $first_card = $first_card == null ? $card_name : $first_card;
-                    $card_name = str_replace("’", "'", $card_name);
-                    $line = $bits[1] . '&nbsp;<a class="deckbox_link" target="_blank" href="https://deckbox.org/mtg/'. $card_name .
-                        '">' . $card_name . '</a><br />';
-                    $current_body .= $line;
-                    $current_count += intval($bits[1]);
-                } else {
-                    // Beginning of a new category. If this was not the first one, we put the previous one
-                    // into the response body.
-                    if ($current_title != "") {
-                        $html .= '<span style="font-weight:bold">' . $current_title . ' (' .
-                            $current_count . ')</span><br />';
-                        $html .= $current_body;
-                        if (preg_match("/Sideboard/", $line) && !$second_column) {
+                // Calculate total count for this category
+                $total_count = 0;
+                $category_body = '';
+
+                foreach ($cards as $card) {
+                    if ($first_card === null) {
+                        $first_card = $card['name'];
+                    }
+
+                    $url = 'https://deckbox.org/mtg/' . $card['name'];
+                    if ($card['set']) {
+                        $url .= '?set=' . $card['set'];
+                        if ($card['nr']) {
+                            $url .= '&nr=' . $card['nr'];
+                        }
+                    }
+
+                    $category_body .= $card['count'] . '&nbsp;<a class="deckbox_link" target="_blank" href="' .
+                        esc_attr($url) . '">' . $card['name'] . '</a><br />';
+                    $total_count += $card['count'];
+                }
+
+                // Only render category if it has cards
+                if (!empty($cards)) {
+                    // Render category header (skip if first category has no name)
+                    if ($index > 0 || $category_name !== '') {
+                        $html .= '<span style="font-weight:bold">' . $category_name . ' (' .
+                            $total_count . ')</span><br />';
+                    }
+
+                    $html .= $category_body;
+
+                    // Handle column breaks
+                    if ($index < count($categories) - 1) {
+                        $next_category_name = $categories[$index + 1]['name'];
+                        if (preg_match("/Sideboard/", $next_category_name) && !$second_column) {
                             $html .= '</td><td>';
                             $second_column = true;
-                        } else if (preg_match("/Lands/", $line) && !$second_column) {
+                        } else if (preg_match("/Lands/", $next_category_name) && !$second_column) {
                             $html .= '</td><td>';
                             $second_column = true;
                         } else {
                             $html .= '<br />';
                         }
                     }
-                    $current_title = $line; $current_count = 0; $current_body = '';
                 }
             }
-            $html .= '<span style="font-weight:bold">' . $current_title . ' (' . $current_count .
-                ')</span><br />' . $current_body;
 
             if ($style == 'embedded') {
                 $html .= '<td class="card_box"><img class="on_page" src="https://deckbox.org/mtg/' .
@@ -436,4 +520,3 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
     }
 }
-
