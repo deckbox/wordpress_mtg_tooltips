@@ -18,7 +18,6 @@ function deckbox_launch_tooltip_plugin() {
     $tp = new Deckbox_Tooltip_plugin();
 }
 
-
 if (! class_exists('Deckbox_Tooltip_plugin')) {
     class Deckbox_Tooltip_plugin {
         private $_name;
@@ -34,6 +33,21 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         const DEFAULT_DECK_WIDTH = 510;
         const DEFAULT_FONT_SIZE = 100;
         const DEFAULT_LINE_HEIGHT = 140;
+
+        private $validSymbols = [
+                                    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15','16', '17', '18', '19', '20', '100', '1000000',
+                                    'W', 'U', 'B', 'R', 'G', 'C',
+                                    'WU', 'WB', 'UR', 'UB', 'BR', 'BG', 'RG', 'RW', 'GW', 'GU',
+                                    '2W', '2U', '2B', '2R', '2G',
+                                    'WP', 'UP', 'BP', 'RP', 'GP',
+                                    'UB', 'GW', 'BG', 'BR', 'GU', 'GW', 'RG', 'RW', 'UB', 'UR', 'WB', 'WU',
+                                    'X', 'Y', 'Z',
+                                    'TAP', 'UNTAP',
+                                    'UNTAPCOST',
+                                    'TAPOLD', 'WOLD', 'HALF', 'INF'
+                                ];
+
+        private $validShadowsDisablement = ['false', '0'];
 
         function __construct() {
             $this->_name = 'Magic the Gathering Card Tooltips';
@@ -67,6 +81,10 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             add_shortcode('mtg_deck', array($this,'parse_mtg_deck'));
             add_shortcode('deck', array($this,'parse_mtg_deck'));
             add_shortcode('d', array($this,'parse_mtg_deck'));
+			add_shortcode('s', array($this,'parse_mtg_symbol'));
+			add_shortcode('symbol', array($this, 'parse_mtg_symbol'));
+			add_shortcode('color_identity', array($this, 'parse_color_identity'));
+			add_shortcode('ci', array($this, 'parse_color_identity'));
         }
 
         function add_buttons() {
@@ -97,7 +115,15 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
         }
 
         function parse_mtg_card($atts, $content=null) {
-            extract(shortcode_atts(array("style" => null), $atts));
+            extract(shortcode_atts(array(
+                "style" => null,
+                "size" => '310px',
+                "meta_custom_field" => null
+            ), $atts));
+
+            if (($content === '' || $content === null) && $meta_custom_field !== null) {
+                $content = get_post_meta(get_the_id(), $meta_custom_field, true);
+            }
 
             $card_name = $content;
             $set_code = null;
@@ -121,10 +147,77 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             }
 
             $link_content = ($style === 'embedded')
-                ? '<img src="https://deckbox.org/mtg/' . $card_name . esc_attr($tooltip_params) . '/tooltip'  . '" alt="' . esc_attr($card_name) . '" />'
+                ? '<img src="https://deckbox.org/mtg/' . $card_name . esc_attr($tooltip_params) . '/tooltip'  . '" style="max-height:' .$size. '" alt="' . esc_attr($card_name) . '" />'
                 : $card_name;
 
             return '<a class="deckbox_link" target="_blank" href="' . esc_attr($url) . '">' . $link_content . '</a>';
+        }
+
+		function parse_color_identity($atts, $content=null) {
+            extract(shortcode_atts(array(
+                        "size" => null,
+                        "colors" => null,
+                        "shadow" => null,
+						"meta_custom_field" => null
+                    ), $atts));
+
+			if ($colors === null) {
+				$colors = get_post_meta(get_the_id(), $meta_custom_field, true);
+			}
+
+			$colorsArray = str_split($colors);
+
+			$line = '';
+
+			foreach ($colorsArray as $color) {
+				$line .= $this->parse_mtg_symbol(['symbol' => $color, 'size' => $size, 'shadow' => $shadow]).' ';
+			}
+
+			return $line;
+		}
+
+        function parse_mtg_symbol($atts, $content=null) {
+            extract(shortcode_atts(array(
+                        "size" => null,
+                        "symbol" => null,
+                        "shadow" => null
+                    ), $atts));
+
+            if (in_array(strtoupper($symbol), $this->validSymbols)) {
+                $symbol = strtolower($symbol);
+            } else {
+                return '';
+            }
+
+			if (!$size) {
+				$size = '1em';
+			}
+
+            $sizeUnits = preg_replace('/[0-9]/', '', $size);
+
+            preg_match('^(auto|0|(\d*\.?\d+(px|em|ex|%|in|cm|mm|pt|pc|vh|vw|vmin|vmax)?))$', $size, $matches);
+
+            if ($matches === 0) {
+                return '';
+            }
+
+            $sizeh = $sizew = (float) filter_var($size, FILTER_SANITIZE_NUMBER_FLOAT);
+
+            if ($symbol == '1000000') {
+                $sizew = $sizeh * 5.07;
+            } else if ($symbol === '100') {
+                $sizew = $sizeh * 1.88;
+            }
+
+            if (!in_array(strtolower($shadow), $this->validShadowsDisablement)) {
+                $sizeShadow = $sizeh * 0.05;
+
+                $shadow = 'box-shadow: -'.$sizeShadow.$sizeUnits.' '.$sizeShadow.$sizeUnits.' 0 #000000;border-radius:'.$sizeh.$sizeUnits.';';
+            } else {
+                $shadow = '';
+            }
+
+            return '<img src="'.plugins_url( 'images/'.$symbol.'.svg', __FILE__ ).'" style="height:'.$sizeh.$sizeUnits.';width:'.$sizew.$sizeUnits.';'.$shadow.'" >';
         }
 
         function cleanup_shortcode_content($content) {
@@ -145,7 +238,15 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             extract(shortcode_atts(array(
                         "title" => null,
                         "style" => null,
+						"meta_custom_field" => null,
+                        "show_specific_card_details" => null
                     ), $atts));
+
+            if ($show_specific_card_details === 'true' || $show_specific_card_details === '1') {
+                $showSpecificCardDetails = true;
+            } else {
+                $showSpecificCardDetails = false;
+            }
 
             $response = '';
             if ($title) {
@@ -158,8 +259,13 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 $this->get_setting('deck_width') .'px;font-size:' . $this->get_setting('font_size') .
                 '%;line-height:' .$this->get_setting('line_height'). '%"><tr><td>';
 
-            $lines = $this->cleanup_shortcode_content($content);
-            $response .= $this->parse_mtg_deck_lines($lines, $style) . '</td>';
+			$lines = $this->cleanup_shortcode_content($content);
+
+			if ($content === '' && $meta_custom_field !== null) {
+				$lines = $this->cleanup_shortcode_content(get_post_meta(get_the_ID(), $meta_custom_field, true));
+			}
+
+            $response .= $this->parse_mtg_deck_lines($lines, $style, $showSpecificCardDetails) . '</td>';
             $response .= '</tr></table>';
 
             return $response;
@@ -205,7 +311,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             return $categories;
         }
 
-        function parse_mtg_deck_lines($lines, $style) {
+        function parse_mtg_deck_lines($lines, $style, $showSpecificCardDetails = false) {
             $categories = $this->parse_deck_structure($lines);
 
             $first_card = null;
@@ -234,7 +340,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                     }
 
                     $category_body .= $card['count'] . '&nbsp;<a class="deckbox_link" target="_blank" href="' .
-                        esc_attr($url) . '">' . $card['name'] . '</a><br />';
+                        esc_attr($url) . '">' . $card['name'] . ($showSpecificCardDetails && $card['set'] ? ' (' . $card['set'] . ') ' . $card['nr'] : '') . '</a><br />';
                     $total_count += $card['count'];
                 }
 
