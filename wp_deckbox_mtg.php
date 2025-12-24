@@ -138,7 +138,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             $tooltip_params = '';
             if ($set_code) {
                 $url .= '?set=' . $set_code;
-                $tooltip_params .= '?set=' . $set_code;
+                $tooltip_params .= 'set=' . $set_code;
                 if ($collector_nr) {
                     $url .= '&nr=' . $collector_nr;
                     $tooltip_params .= '&nr=' . $collector_nr;
