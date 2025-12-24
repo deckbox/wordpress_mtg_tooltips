@@ -120,7 +120,7 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
                 "meta_custom_field" => null
             ), $atts));
 
-            if ($content === '') {
+            if ($content === '' || $content === null) {
                 $content = get_post_meta(get_the_id(), $meta_custom_field, true);
             }
 
