@@ -121,8 +121,8 @@ if (! class_exists('Deckbox_Tooltip_plugin')) {
             ), $atts));
 
             if ($content === '') {
-				$content = get_post_meta(get_the_id(), $meta_custom_field, true);
-			}
+                $content = get_post_meta(get_the_id(), $meta_custom_field, true);
+            }
 
             $card_name = $content;
             $set_code = null;

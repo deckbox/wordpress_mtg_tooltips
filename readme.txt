@@ -2,8 +2,8 @@
 Contributors: grimdonkey
 Tags: magic the gathering, deckbox, MtG, tcg, ccg, magic, cards, tooltips
 Requires at least: 2.8.6
-Tested up to: 6.7.1
-Stable tag: 3.6.0
+Tested up to: 6.9
+Stable tag: 3.8.0
 
 Easily transform Magic the Gathering card names into links that show the card image in a tooltip when hovering over them. You can also quickly create deck listings.
 
@@ -29,6 +29,21 @@ The default style for displaying decks is a card listing with each card having a
 
 The screenshot section includes an image of the above deck listing.
 
+**Embedded Card Display**: Individual card shortcodes also support the embedded style, displaying the card image inline instead of as a tooltip:
+
+    [card style="embedded"]Lightning Bolt[/card]
+    [c style="embedded"]Tarmogoyf (FUT) 153[/c]
+
+**Arena Format Support**: You can now paste deck lists directly from MTG Arena (or other compatible exports - like Moxfield) with set codes and collector numbers:
+
+    [deck]
+    4 Lightning Bolt (M10) 146
+    4 Mountain (FIN)
+    2 Snapcaster Mage
+    [/deck]
+
+The plugin will display only the card name and link to the specific printing when set code and number are provided. Set codes are case-insensitive. This format also works with the [card] shortcode: [card]Lightning Bolt (M10) 146[/card]
+
 == Installation ==
 
 1. Head over to the "Install Plugins" section of your Admin Panel, and use the "Upload" link to install the zip file.
@@ -53,6 +68,18 @@ Completely compatible: your old posts will remain the same as before, even thoug
 2. An example of a really small deck listing, produced by the code shown in the description
 
 == Changelog ==
+
+= 3.8.0 =
+* Add embedded style support for individual card shortcodes
+* Cards with style="embedded" display the card image inline instead of as a tooltip
+* Add rounded corners to card images for better visual appearance
+
+= 3.7.0 =
+* Add support for MTG Arena deck format with set codes and collector numbers
+* Cards can now specify exact printings using format: "Card Name (SET) 123"
+* Display text shows only card name, links include set/number for accurate tooltips
+* Works in both deck listings and card shortcodes
+* Test on latest wordpress (6.9)
 
 = 3.6.0 =
 * Cleanup plugin options processing and sanitization. Use a nonce in the form.
